@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>BÁO CÁO TỔNG KẾT HỌC KÌ I</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;font-family:Segoe UI,Roboto,Arial,sans-serif}
+body{
+margin:0;overflow:hidden;color:#333;
+background:
+radial-gradient(circle at 15% 15%, #ffe3ee 0%, transparent 40%),
+radial-gradient(circle at 85% 20%, #ffe9f2 0%, transparent 45%),
+radial-gradient(circle at 40% 90%, #fff0f6 0%, transparent 40%),
+repeating-linear-gradient(45deg,
+rgba(255,200,220,0.15) 0px,
+rgba(255,200,220,0.15) 12px,
+transparent 12px,
+transparent 24px),
+linear-gradient(135deg,#f8eef2,#ffffff);
+}
+
+/* ===== MOVING LIGHT BLOBS ===== */
+.bg{
+position:fixed;inset:0;z-index:-2;overflow:hidden;
+}
+.blob{
+position:absolute;width:420px;height:420px;border-radius:50%;
+filter:blur(90px);opacity:.55;
+animation:float 22s infinite linear;
+}
+.blob.pink{background:#ffb7d5;top:10%;left:10%}
+.blob.rose{background:#ffc2e0;top:65%;left:15%;animation-duration:26s}
+.blob.peach{background:#ffd6e8;top:30%;left:70%;animation-duration:24s}
+.blob.violet{background:#f2c7ff;top:70%;left:65%;animation-duration:30s}
+
+@keyframes float{
+0%{transform:translate(0,0)}
+25%{transform:translate(80px,-60px)}
+50%{transform:translate(-60px,80px)}
+75%{transform:translate(60px,40px)}
+100%{transform:translate(0,0)}
+}
+
+/* ===== FALLING HEARTS ===== */
+.hearts{
+position:fixed;inset:0;pointer-events:none;z-index:-1;
+}
+.heart{
+position:absolute;color:#ff8fb3;font-size:18px;
+animation:fall linear infinite;
+opacity:.75;
+}
+@keyframes fall{
+0%{transform:translateY(-10vh);opacity:0}
+10%{opacity:.8}
+100%{transform:translateY(110vh);opacity:0}
+}
+
+/* ===== HEADER ===== */
+.header{
+position:fixed;top:18px;left:26px;right:26px;
+display:flex;align-items:center;gap:14px;z-index:10;
+}
+.header img{width:54px;height:54px;object-fit:contain}
+.header .school{font-size:18px;font-weight:700;color:#a43c63}
+.header .slogan{font-size:13px;color:#555}
+
+/* ===== SCREEN ===== */
+.screen{
+position:absolute;inset:0;
+padding:95px 70px 40px;
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+opacity:0;pointer-events:none;
+transform:scale(.96);
+transition:.45s ease;
+}
+.screen.active{opacity:1;pointer-events:auto;transform:scale(1)}
+
+/* ===== GLOW EFFECT ===== */
+.glow{
+position:absolute;inset:0;pointer-events:none;
+background:radial-gradient(circle at center,
+rgba(255,210,230,.9) 0%,
+rgba(255,210,230,.35) 35%,
+transparent 65%);
+opacity:0;transition:.6s;
+}
+.gold{
+background:radial-gradient(circle at center,
+rgba(255,220,140,.9) 0%,
+rgba(255,220,140,.4) 35%,
+transparent 65%);
+animation:pulse 2.5s infinite;
+}
+@keyframes pulse{0%{opacity:.35}50%{opacity:.8}100%{opacity:.35}}
+.screen.active .glow{opacity:1}
+
+/* ===== MENU ===== */
+#menu h1{
+font-size:48px;color:#a43c63;letter-spacing:1px;
+}
+#menu .subtitle{font-size:20px;color:#444;margin-bottom:36px}
+
+.card-grid{
+display:grid;grid-template-columns:repeat(4,1fr);
+gap:28px;width:100%;max-width:1200px;
+}
+.card{
+background:rgba(255,255,255,.82);
+backdrop-filter:blur(10px);
+border-radius:28px;padding:46px 18px;
+text-align:center;font-size:22px;font-weight:700;
+color:#a43c63;
+border:2px solid #f0bcd0;
+box-shadow:0 18px 40px rgba(0,0,0,.14);
+transition:.25s;
+cursor:pointer;
+}
+.card:hover{transform:translateY(-10px) scale(1.06)}
+
+.fullscreen-btn{
+position:absolute;bottom:30px;right:40px;
+border:2px solid #f0bcd0;border-radius:18px;
+padding:14px 26px;font-size:16px;
+background:#f7cfe0;color:#5a2a3c;
+cursor:pointer;
+}
+
+/* ===== CONTENT FRAME ===== */
+.content-box{
+width:100%;max-width:1200px;height:85%;
+background:rgba(255,255,255,.82);
+backdrop-filter:blur(12px);
+border-radius:38px;padding:38px 48px;
+border:3px solid #f0bcd0;
+box-shadow:
+0 0 0 6px rgba(255,200,220,.25),
+0 22px 55px rgba(0,0,0,.16);
+display:grid;grid-template-columns:1.3fr 1fr;gap:32px;
+}
+.text h2{color:#a43c63;font-size:36px;margin-bottom:12px}
+.text ul{font-size:21px;line-height:1.85;padding-left:22px}
+.text li{margin-bottom:6px}
+
+.tip{
+margin-top:16px;padding:14px 18px;
+background:#fff1f6;border-left:6px solid #d68ba2;
+border-radius:14px;font-size:16px;color:#555;
+}
+
+/* ===== SLIDESHOW ===== */
+.slideshow{
+  position:relative;
+  width:100%;
+  height:100%;              /* chiếm toàn bộ cột bên phải */
+  min-height:420px;         /* đảm bảo đủ lớn */
+  border-radius:26px;
+  overflow:hidden;
+  background:#f8dbe7;
+  border:2px solid #f0bcd0;
+}
+
+.slideshow img{
+position:absolute;inset:0;
+width:100%;height:100%;
+object-fit:contain;           /* không cắt ảnh */
+background:#f8dbe7;           /* nền hồng nhẹ khi có viền trống */
+opacity:0;transition:1s;
+}
+
+.slideshow img.active{opacity:1}
+
+/* ===== BUTTON ===== */
+.back-btn{
+position:absolute;top:95px;left:40px;
+border:2px solid #f0bcd0;border-radius:16px;
+padding:10px 18px;background:#f7cfe0;
+cursor:pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1000px){
+.card-grid{grid-template-columns:1fr 1fr}
+.content-box{grid-template-columns:1fr;height:auto}
+.screen{padding:95px 20px 20px}
+}
+@media(max-width:600px){
+.card-grid{grid-template-columns:1fr}
+}
+
+/* ================== CSS BỔ SUNG – GHÉP THÊM ================== */
+/* TẮT LỚP PHỦ GLOW Ở TRANG MỞ ĐẦU */
+#menu .glow{
+  opacity:0 !important;
+}
+
+/* TIÊU ĐỀ PHÁT SÁNG MẠNH */
+#menu h1{
+font-size:64px !important;
+font-weight:900 !important;
+letter-spacing:1px;
+
+color:#a0124a;                 /* màu chữ đậm hơn */
+-webkit-text-stroke: 1px #fff; /* viền trắng mảnh giúp nét chữ rõ */
+
+text-shadow:
+0 2px 0 rgba(255,255,255,.9),   /* viền sáng sát chữ */
+0 0 10px rgba(255,120,180,.7),
+0 0 22px rgba(255,160,210,.8),
+0 10px 28px rgba(0,0,0,.35);
+
+text-rendering: geometricPrecision;
+}
+
+/* KHUNG VIDEO POPUP */
+#videoModal{
+position:fixed;inset:0;z-index:50;
+background:rgba(0,0,0,.65);
+display:none;align-items:center;justify-content:center;
+}
+#videoModal .box{
+width:92%;
+max-width:1200px;
+height:80vh;
+
+background:#fff;
+border-radius:26px;
+padding:18px;
+position:relative;
+
+box-shadow:0 0 40px rgba(255,150,200,.9);
+animation:zoomIn .35s ease;
+
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+@keyframes zoomIn{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+#videoModal button{
+position:absolute;top:-16px;right:-16px;
+background:#ff7fb3;color:white;border:none;
+border-radius:50%;width:42px;height:42px;
+font-size:20px;cursor:pointer;
+}
+/* ===== NÚT MỞ VIDEO TRONG SLIDE ===== */
+.video-btn{
+margin-top:18px;
+padding:12px 22px;
+border:none;
+border-radius:18px;
+background:linear-gradient(135deg,#ff9fc7,#ff6fae);
+color:white;
+font-size:16px;
+font-weight:700;
+cursor:pointer;
+box-shadow:
+0 8px 22px rgba(255,120,180,.6),
+0 0 18px rgba(255,170,210,.9);
+transition:.25s;
+}
+.video-btn:hover{
+transform:scale(1.08);
+box-shadow:
+0 12px 34px rgba(255,100,170,.8),
+0 0 28px rgba(255,160,210,1);
+}
+
+
+</style>
+</head>
+
+<body>
+
+<div class="bg">
+<div class="blob pink"></div>
+<div class="blob rose"></div>
+<div class="blob peach"></div>
+<div class="blob violet"></div>
+</div>
+
+<div class="hearts" id="hearts"></div>
+
+<div class="header">
+<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Logo_Bo_Giao_duc_Va_Dao_Tao.svg/200px-Logo_Bo_Giao_duc_Va_Dao_Tao.svg.png">
+<div>
+<div class="school">TRƯỜNG …………………………</div>
+<div class="slogan">Thi đua dạy tốt – Học tốt – Kỷ cương – Trách nhiệm</div>
+</div>
+</div>
+
+<div id="menu" class="screen active">
+<div class="glow"></div>
+<h1>BÁO CÁO TỔNG KẾT HỌC KÌ I</h1>
+<div class="subtitle">Lớp … – Năm học …</div>
+
+<div class="card-grid">
+<div class="card" onclick="openSection('NeNep')">NỀN NẾP</div>
+<div class="card" onclick="openSection('hocTap')">HỌC TẬP</div>
+<div class="card" onclick="openSection('thanhTich')">THÀNH TÍCH – HSG</div>
+<div class="card" onclick="openSection('phongTrao')">PHONG TRÀO</div>
+</div>
+
+<button class="fullscreen-btn" onclick="goFullscreen()">Trình chiếu toàn màn hình</button>
+</div>
+
+<div id="NeNep" class="screen">
+<div class="glow gold"></div>
+<button class="back-btn" onclick="backMenu()">Quay lại</button>
+<button class="video-btn" onclick="openVideo('nennep.mp4')">▶ Xem video minh họa</button>
+<div class="content-box">
+<div class="text">
+<h2>1. Về nền nếp</h2>
+<ul>
+<li>Tỷ lệ chuyên cần đạt …%</li>
+<li>Thực hiện nghiêm túc nội quy, đồng phục</li>
+<li>Không có học sinh vi phạm kỷ luật nghiêm trọng</li>
+</ul>
+<div class="tip">Nhấn mạnh tinh thần tự giác và sự phối hợp giữa gia đình – nhà trường.</div>
+</div>
+<div class="slideshow">
+<img src="https://picsum.photos/800/500?1" class="active">
+<img src="https://picsum.photos/800/500?2">
+<img src="https://picsum.photos/800/500?3">
+</div>
+</div>
+</div>
+
+<div id="hocTap" class="screen">
+<div class="glow gold"></div>
+<button class="back-btn" onclick="backMenu()">Quay lại</button>
+<button class="video-btn" onclick="openVideo('hoctap.mp4')">▶ Xem video minh họa</button>
+<div class="content-box">
+<div class="text">
+<h2>2. Kết quả học tập</h2>
+<ul>
+<li>Tỷ lệ khá, giỏi: …%</li>
+<li>Không có học sinh lưu ban</li>
+<li>Phong trào học tập tiến bộ rõ rệt</li>
+</ul>
+<div class="tip">So sánh nhẹ với đầu năm để thấy sự tiến bộ.</div>
+</div>
+<div class="slideshow">
+<img src="https://picsum.photos/800/500?4" class="active">
+<img src="https://picsum.photos/800/500?5">
+<img src="https://picsum.photos/800/500?6">
+</div>
+</div>
+</div>
+
+<div id="thanhTich" class="screen">
+<div class="glow gold"></div>
+<button class="back-btn" onclick="backMenu()">Quay lại</button>
+<button class="video-btn" onclick="openVideo('thanhtich.mp4')">▶ Xem video minh họa</button>
+<div class="content-box">
+<div class="text">
+<h2>3. Thành tích – Đội tuyển HSG</h2>
+<ul>
+<li>HSG cấp xã: … giải</li>
+<li>05 học sinh vào đội tuyển cấp thành phố</li>
+<li>Tham gia đầy đủ các đợt ôn luyện</li>
+</ul>
+<div class="tip">Ghi nhận nỗ lực của giáo viên và học sinh.</div>
+</div>
+<div class="slideshow">
+<img src="1.jpg" class="active">
+<img src="https://picsum.photos/800/500?11">
+<img src="https://picsum.photos/800/500?12">
+</div>
+</div>
+</div>
+
+<div id="phongTrao" class="screen">
+<div class="glow"></div>
+<button class="back-btn" onclick="backMenu()">Quay lại</button>
+<button class="video-btn" onclick="openVideo('phongtrao.mp4')">▶ Xem video minh họa</button>
+<div class="content-box">
+<div class="text">
+<h2>4. Hoạt động phong trào</h2>
+<ul>
+<li>Kế hoạch nhỏ – gây quỹ lớp</li>
+<li>Văn nghệ – thể thao – lao động</li>
+<li>Tích cực tham gia hoạt động Đội</li>
+</ul>
+<div class="tip">Nhấn mạnh kỹ năng sống và tinh thần tập thể.</div>
+</div>
+<div class="slideshow">
+<img src="https://picsum.photos/800/500?7" class="active">
+<img src="https://picsum.photos/800/500?8">
+<img src="https://picsum.photos/800/500?9">
+</div>
+</div>
+</div>
+
+<!-- ===== VIDEO POPUP – GHÉP THÊM ===== -->
+<div id="videoModal">
+  <div class="box">
+    <video id="popupVideo" controls style="width:100%;height:100%;object-fit:contain;border-radius:18px">
+      <source src="" type="video/mp4">
+    </video>
+    <button onclick="closeVideo()">✖</button>
+  </div>
+</div>
+
+<script>
+function openSection(id){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+function backMenu(){
+document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+menu.classList.add("active");
+closeVideo();
+}
+function goFullscreen(){
+if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+}
+
+/* slideshow */
+document.querySelectorAll(".slideshow").forEach(show=>{
+let imgs=show.querySelectorAll("img"),i=0;
+setInterval(()=>{
+imgs[i].classList.remove("active");
+i=(i+1)%imgs.length;
+imgs[i].classList.add("active");
+},3500);
+});
+
+/* falling hearts */
+const hearts=document.getElementById("hearts");
+for(let i=0;i<30;i++){
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="❤";
+h.style.left=Math.random()*100+"vw";
+h.style.animationDuration=(6+Math.random()*6)+"s";
+h.style.fontSize=(12+Math.random()*14)+"px";
+h.style.animationDelay=(Math.random()*5)+"s";
+hearts.appendChild(h);
+}
+function openVideo(src){
+  const modal = document.getElementById("videoModal");
+  const video = document.getElementById("popupVideo");
+
+  video.src = src;          // gán link video
+  modal.style.display = "flex";
+  // KHÔNG video.play() => không tự chạy
+}
+
+function closeVideo(){
+  const modal = document.getElementById("videoModal");
+  const video = document.getElementById("popupVideo");
+
+  video.pause();
+  video.src = "";
+  modal.style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
